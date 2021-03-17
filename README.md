@@ -10,6 +10,7 @@ The main R script containing functions to create a pattern graph object and esti
 
 ### PG
 `PG = function(dat_miss, dat_cov=NULL)`
+
 The R script for creating a pattern graph object. The default pattern graph will be the graph corresponding to the complete-case missing value (CCMV) restriction. You can easily modify the pattern graph by changing `parent` in the output. See Section 2 and 3 in `PG_demo_PISA.R`.
 
 - Input:
@@ -27,6 +28,8 @@ The R script for creating a pattern graph object. The default pattern graph will
 
 ### PGfit
 `PGfit = function(PG)`
+
+The function to fit a logistic regresison model of the odds in the pattern graph.
 
 - Input: 
   - PG: The input PG object, created from the `PG` function
