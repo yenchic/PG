@@ -11,14 +11,16 @@ library(mgcv)
 library(igraph)
 
 #' Creating a pattern graph object.
-#' @param dat_miss The data matrix that may contain missingness.
-#' @param dat_cov The covariates we wish to adjust, cannot contain missingness.
+#' @param dat_miss The primary data matrix that may contain missingness (does not include the covariates).
+#' @param dat_cov The data matrix of the covariates that we wish to adjust, 
+#' cannot contain missingness.
 #' @export
 PG = function(dat_miss, dat_cov=NULL) UseMethod("PG")
 
 #' Creating a pattern graph object.
-#' @param dat_miss The data matrix that may contain missingness.
-#' @param dat_cov The covariates we wish to adjust, cannot contain missingness.
+#' @param dat_miss The primary data matrix that may contain missingness (does not include the covariates).
+#' @param dat_cov The data matrix of the covariates that we wish to adjust, 
+#' cannot contain missingness.
 #' @return A S4 object of class "PG". A list consisting
 #' \item{dat_miss} 
 #' The input missing data.
@@ -26,10 +28,12 @@ PG = function(dat_miss, dat_cov=NULL) UseMethod("PG")
 #' The input covariates.
 #' \item{info}
 #' A list of information on the patterns of each observation.
+#' \item{parent}
+#' The parent pattern of each response pattern.
 #' \item{summary}
 #' The summary of frequency of each pattern and the corresponding pattern index.
 #' \item{labels.pattern}
-#' The response pattern labe of each observation.
+#' The response pattern label of each observation.
 #' @export
 PG.default = function(dat_miss, dat_cov=NULL){
   pg_list = list()
@@ -99,9 +103,9 @@ print.PG = function(x){
 
 
 #' Fitting the pattern graph based on IPW approach.
-#' @param PG The input PG object.
+#' @param PG The input PG object, created from the PG function.
 #' @export
-PGfit = function(PG, method="logistic") UseMethod("PGfit")
+PGfit = function(PG) UseMethod("PGfit")
 
 #' Fitting the pattern graph based on IPW approach. Currently, the propensity score
 #' is based on logistic regression.
@@ -111,14 +115,16 @@ PGfit = function(PG, method="logistic") UseMethod("PGfit")
 #' The igraph object of the pattern graph.
 #' \item{igraph_named}
 #' The igraph object of the pattern graph with vertex named after patterns.
-#' \item{pths}
+#' \item{paths}
 #' All paths in the pattern graph.
 #' \item{model.par}
 #' The fitted logistic parameter at each pattern.
-#' \item{odds}
+#' \item{comp.idx}
+#' The index of complete observations.
+#' \item{comp.odds}
 #' A matrix of the selection odds of complete cases evaluated at each pattern.
 #' Each row is a complete case and each column represents a response pattern.
-#' \item{complete.data}
+#' \item{comp.data}
 #' The complete case data along with the corresponding weights.
 #' \item{weights}
 #' The weights of each complete case.
@@ -163,11 +169,11 @@ PGfit.default = function(PG){
   pg_igraph_named = graph_from_edgelist(rel_matrix_named)
   
   plot(pg_igraph_named)
-  pg_path = all_simple_paths(pg_igraph, from=4, mode="out")
+  pg_path = all_simple_paths(pg_igraph, from=pat_comp, mode="out")
   
   pg_fit[["igraph"]] = pg_igraph
   pg_fit[["igraph_named"]] = pg_igraph_named
-  pg_fit[["paths"]] = all_simple_paths(pg_igraph_named, from=4, mode="out")
+  pg_fit[["paths"]] = all_simple_paths(pg_igraph_named, from=pat_names[pat_comp], mode="out")
   
   ### fitting the model
   for(j in pat_idx){
