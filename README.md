@@ -53,4 +53,7 @@ An R script for demonstrating how to use the script `PG.R`. It fits a couple of 
 - Section 2&3: modifying the pattern graphs by changing the parent of a pattern.
 - Section 4: applying to cases with two covariates.
 
+## PISA2009Germany.txt
+
+The PISA data at year 2009 of Germany students. It is modified from https://www.oecd.org/pisa/data/pisa2009database-downloadabledata.htm. The preprocessing procedure is described in Appendix C of https://arxiv.org/abs/2004.00744. 
 
